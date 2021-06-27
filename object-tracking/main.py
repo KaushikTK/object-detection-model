@@ -13,27 +13,20 @@ use appropriate tracker depending on the requirement
 'MOSSE' : cv2.TrackerMOSSE_create()
 
 """
+
 tracker = cv2.TrackerKCF_create()
 initBB = None
-originalImg = None
 camera = cv2.VideoCapture(0)
 
 
 def track(img):
     global tracker
-    global initBB
-    global originalImg
-
+    
     (success, box) = tracker.update(img)
 
     if success:
         # get bounding box
         (x, y, w, h) = [int(v) for v in box]
-
-        if int(w*h) / int(img.shape[0]*img.shape[1]) < 0.2 : 
-            tracker = cv2.TrackerKCF_create()
-            tracker.init(originalImg, initBB)
-            return img
 
         # draw bounding box
         cv2.rectangle(img, (x,y), (w+x,h+y), (0,0,255), 1)
@@ -55,7 +48,6 @@ while True:
     
     if key == ord('s'):
         initBB = cv2.selectROI('selection window', img, True, False)
-        originalImg = img
         tracker.init(img, initBB)
 
         
